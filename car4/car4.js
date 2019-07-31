@@ -32,16 +32,20 @@ device.on('connect', function() {
     
     // Start the publish loop
     infiniteLoopPublish();
+
+    // testing a 2nd publish
+    device.publish("iot-vehicles/telemetry", `{"secondary data": 777}` );
+
 });
 
-// Function sending car telemetry data every 7 seconds
+// Function sending car telemetry data every 5 seconds
 function infiniteLoopPublish() {
     console.log('Sending car telemetry data to AWS IoT for ' + deviceName);
     // Publish car data to edx/telemetry topic with getCarData
     device.publish("iot-vehicles/telemetry", JSON.stringify(getCarData(deviceName)));
     
-    // Start Infinite Loop of Publish every 7 seconds
-    setTimeout(infiniteLoopPublish, 7000);
+    // Start Infinite Loop of Publish every 5 seconds
+    setTimeout(infiniteLoopPublish, 5000);
 }
 
 // Function to create a random float between minValue and maxValue
