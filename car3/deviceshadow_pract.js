@@ -1,3 +1,4 @@
+
 // -- Device Shadow Practice --
 // Register to Thing Shadow and act on light status
 
@@ -33,10 +34,12 @@ const thingShadows = awsIoT.thingShadow({
 });
 
 // Register/Subscribe to the thingShadow topic
+// 1) register
 thingShadows.register(thingName, {}, function(err, failedTopics) {
     if (isUndefined(err) && isUndefined(failedTopics)) {
         console.log('The ' + thingName + ' has been registered.\r\nSending initial get to set the light state.');
-        initialGetClientToken = thingShadows.get(thingName);
+        initialGetClientToken = thingShadows.get(thingName); // 2) initial GET req is sent
+        // console.log(initialGetClientToken)
     }
 });
 
@@ -77,14 +80,19 @@ function isUndefined(value) {
 }
 
 // On status when a get/update/delete is received
+// 3) called after step 2 ^, means AWS has responded back 
 thingShadows.on('status', function(thingName, statusType, clientToken, stateObject) {
+    // console.log("thingName",thingName )
+    // console.log("statusType", statusType )
+    // console.log("clientToken", clientToken)
+    // console.log("stateObject", stateObject)
     
     // Resolving the initial state status. There could be no state, a delta state or a reported state
     
     // If the clientToken is for our initial Get request and the status is rejected
     //  this means that the Thing Shadow has been deleted. We need to set the state to defaults
     if (initialGetClientToken === clientToken && statusType === 'rejected') {
-        
+        console.log("thing shadow has been deleted, now setting state to defaults")
         setDefaultState();
     }
     
@@ -95,6 +103,7 @@ thingShadows.on('status', function(thingName, statusType, clientToken, stateObje
         
         // If the Thing Shadow is empty, set the state to defaults
         if (Object.keys(stateObject.state).length == 0) {
+            console.log("thing shadow is empty, now setting state to defaults")
             setDefaultState();
         } 
         // Else if there is a delta state, resolve it
@@ -136,6 +145,7 @@ thingShadows.on('close', function() {
 // Set the state to defaults
 function setDefaultState() {
     console.log('No lights state found, setting state to defaults.');
+    console.log('updating thing shadow');
     thingShadows.update(thingName, initialState);
     outputLightState(initialState.state.reported.lights);
 }
