@@ -1,5 +1,8 @@
 # aws-iot-vehicles
 
+Vehicle to Vehicle communication and further it to Infastructure comm
+
+
 Note to self: ignored all certificates & keys; as well as the endpoint json file 
 
 Main solution folder contains the endpoint.json & the root-CA.crt
